@@ -49,6 +49,7 @@ def valid_move(sub_board, choice):
     if sub_board[choice-1] == 'x' or sub_board[choice-1] == 'o':
         return False
     return True
+
 def valid_board(board_state, choice):
     valid_inputs= [i for i in range(1,10)]
     if not choice.isnumeric():
@@ -142,4 +143,3 @@ if __name__ == "__main__":
         gaming = not game_ending(board_state, mark)
         game_board = update_game_board(sub_board, selected_board, game_board)
         selected_board, current_player = update_game_state(board_state, str(move), current_player)
-        
