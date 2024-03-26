@@ -1,3 +1,10 @@
+big_x = ["x", " ", "x",
+         " ", "x", " ",
+         "x", " ", "x"]
+
+big_o = ["o", "o", "o",
+         "o", " ", "o",
+         "o", "o", "o"]
 
 def make_board(): #create the game board made of 9 tic tac toe boards. 
     num = [i for i in range(1,10)]
@@ -27,13 +34,11 @@ def render(board):
 def chosen_board(board, choice):
     return board[choice]
 
-def make_move(sub_board):
-    a = input("input correct integer")
-    while True: 
-        if valid_move(sub_board, a):
-            return a
-        else: 
-            a = input("Please choose a valid move")
+def get_mark(player):
+    if player == 0: 
+        return 'x'
+    return 'o'
+    
 def valid_move(sub_board, choice):
     valid_inputs = [i for i in range(1,10)]
     if not choice.isnumeric():
@@ -66,6 +71,60 @@ def draw_state(sub_board):
         if i in nums: 
             return False
     return True 
+def board_selection(selected_board, board_state, game_board):
+    if selected_board == 0: 
+        choose = input('Choose a board to play on: ')
+        while not valid_board(board_state, choose):
+            choose = input('Please select a correct board: ')
+        selected_board = int(choose)
+    return chosen_board(game_board, selected_board-1), selected_board
+def make_move(sub_board, mark, selected_board):
+    new_board = sub_board[:]
+    move = input("Make your move on the board " + str(selected_board)+ ": ")
+    while not valid_move(sub_board, move): 
+        move = input("choose a correct move: ")
+    move = int(move)
+    new_board[move-1] = mark
+    return new_board, move
+def update_states(sub_board, mark, selected_board, board_state):
+    new_board_state = board_state[:]
+    new_sub_board = sub_board[:]
+    if win_state(sub_board, mark):
+        if mark == 'o':
+            print('Player 2 wins this board')
+            new_sub_board[:] = big_o 
+        if mark == 'x':
+            print('Player 1 wins this board')
+            new_sub_board[:] = big_x
+        new_board_state[selected_board-1] = mark
+    elif draw_state(sub_board):
+        new_board_state[selected_board - 1] = "D"
+    return new_board_state, new_sub_board
+def game_ending(board_state, mark):
+    if win_state(board_state, mark):
+        print("WINNER: ", current_player+1)
+        print(board_state[:3])
+        print(board_state[3:6])
+        print(board_state[6:])
+        return True
+    if draw_state(board_state):
+        print("It's a draw!")
+        print(board_state[:3])
+        print(board_state[3:6])
+        print(board_state[6:])
+        return True
+    return False
+def update_game_state(board_state, move, current_player): 
+    if not valid_board(board_state, move): 
+        selected_board = 0
+    else: 
+        selected_board = move
+    current_player = (current_player + 1) % 2
+    return int(selected_board), current_player
+def update_game_board(sub_board, selected_board, game_board):
+    new_game_board = game_board
+    new_game_board[selected_board-1] = sub_board
+    return new_game_board
 if __name__ == "__main__":
     board_state = [0 for i in range(9)]
     current_player = 0
@@ -74,31 +133,13 @@ if __name__ == "__main__":
     game_board = make_board()
     while gaming: 
         print("It's player", current_player +1, "turn")
-        if current_player == 0: 
-            mark = 'x'
-        else: 
-            mark = 'o'
+        mark = get_mark(current_player)
         render(game_board)
-        if selected_board == 0: 
-            choose = input('Choose a board to play on: ')
-            while not valid_board(board_state, choose):
-                choose = input('Please choose a correct board: ')
-            selected_board = int(choose)
-        sub_board = chosen_board(game_board, selected_board-1)
-        move = input("Make your move on the board " + str(selected_board)+ ': ')
-        while not valid_move(sub_board, move):
-            move = input("choose a correct move: ")
-        sub_board[int(move)-1] = mark
-        if win_state(sub_board, mark): 
-            board_state[selected_board - 1] = mark
-        if  draw_state(sub_board): 
-            board_state[selected_board - 1] = "D"
-        if win_state(board_state, mark):
-            print("WINNER: ", current_player+1)
-            print(board_state)
-            gaming = False
-        if not valid_board(board_state, move):
-            selected_board = 0 
-        else: 
-            selected_board = int(move)
-        current_player = (current_player + 1) % 2
+        sub_board, selected_board = board_selection(selected_board, board_state, game_board)
+        sub_board, move = make_move(sub_board, mark, selected_board)
+        board_state, sub_board = update_states(sub_board, mark, selected_board, board_state)
+
+        gaming = not game_ending(board_state, mark)
+        game_board = update_game_board(sub_board, selected_board, game_board)
+        selected_board, current_player = update_game_state(board_state, str(move), current_player)
+        
