@@ -1,4 +1,4 @@
-from players import RandomPlayer
+from players import RandomPlayer, HumanPlayer
 big_x = ["x", " ", "x",
          " ", "x", " ",
          "x", " ", "x"]
@@ -42,9 +42,6 @@ def get_mark(player):
     
 def valid_move(sub_board, choice):
     valid_inputs = [i for i in range(1,10)]
-    if not choice.isnumeric():
-        return False
-    choice = int(choice) 
     if choice not in valid_inputs:
         return False
     if sub_board[choice-1] == 'x' or sub_board[choice-1] == 'o':
@@ -53,9 +50,6 @@ def valid_move(sub_board, choice):
 
 def valid_board(board_state, choice):
     valid_inputs= [i for i in range(1,10)]
-    if not choice.isnumeric():
-        return False
-    choice = int(choice) 
     if choice not in valid_inputs: 
         return False
     if board_state[choice-1] != 0: 
@@ -73,13 +67,13 @@ def draw_state(sub_board):
         if i in nums: 
             return False
     return True 
-def board_selection(selected_board, board_state, game_board):
-    if selected_board == 0: 
-        choose = input('Choose a board to play on: ')
-        while not valid_board(board_state, choose):
-            choose = input('Please select a correct board: ')
-        selected_board = int(choose)
-    return chosen_board(game_board, selected_board-1), selected_board
+def board_selection(board, choice):
+    return board[choice-1]
+def get_board_selection(board_state, player):
+    choose = player.make_move(board_state, game_board, selected_board)
+    while not valid_board(board_state, choose):
+        choose = player.make_move(board_state)
+    return choose
 def get_move(sub_board, selected_board):
     move = input("Make your move on the board " + str(selected_board)+ ": ")
     while not valid_move(sub_board, move): 
@@ -135,20 +129,25 @@ if __name__ == "__main__":
     gaming = True 
     selected_board = 0
     game_board = make_board()
-    comp_player = RandomPlayer(2)
+    game_mark = ['x', 'o']
+    human = HumanPlayer(1)
+    comp_player1 = RandomPlayer(1)
+    comp_player2 = RandomPlayer(2)
+    players = [comp_player1, comp_player2]
     while gaming: 
         print("It's player", current_player +1, "turn")
-        mark = get_mark(current_player)
+        mark = game_mark[current_player]
         render(game_board)
-        sub_board, selected_board = board_selection(selected_board, board_state, game_board)
-        if current_player == 0: 
-            #first player, x played by human
-            move = get_move(sub_board, selected_board)
-        else: 
-            move = comp_player.make_move
+        if selected_board == 0:
+            selected_board = get_board_selection(board_state, players[current_player])
+        sub_board = board_selection(game_board, selected_board)
+        move = players[current_player].make_move(sub_board, game_board, selected_board)
+        while not valid_move(sub_board, move):
+            print("Make a valid move: ")
+            move = players[current_player].make_move(sub_board, game_board, selected_board)
         sub_board = make_move(sub_board, mark, move)
         board_state, sub_board = update_states(sub_board, mark, selected_board, board_state)
 
         gaming = not game_ending(board_state, mark)
         game_board = update_game_board(sub_board, selected_board, game_board)
-        selected_board, current_player = update_game_state(board_state, str(move), current_player)
+        selected_board, current_player = update_game_state(board_state, move, current_player)
