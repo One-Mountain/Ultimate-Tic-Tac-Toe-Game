@@ -1,4 +1,4 @@
-from players import RandomPlayer, HumanPlayer
+from players import MakeWinningMoveAndBlock, RandomPlayer, HumanPlayer, MakeWinningMove
 big_x = ["x", " ", "x",
          " ", "x", " ",
          "x", " ", "x"]
@@ -72,7 +72,7 @@ def board_selection(board, choice):
 def get_board_selection(board_state, player):
     choose = player.make_move(board_state, game_board, selected_board)
     while not valid_board(board_state, choose):
-        choose = player.make_move(board_state)
+        choose = player.make_move(board_state,game_board, selected_board)
     return choose
 def get_move(sub_board, selected_board):
     move = input("Make your move on the board " + str(selected_board)+ ": ")
@@ -130,10 +130,14 @@ if __name__ == "__main__":
     selected_board = 0
     game_board = make_board()
     game_mark = ['x', 'o']
-    human = HumanPlayer(1)
-    comp_player1 = RandomPlayer(1)
-    comp_player2 = RandomPlayer(2)
-    players = [comp_player1, comp_player2]
+    human = HumanPlayer(2)
+    rand_player1 = RandomPlayer(1)
+    rand_player2 = RandomPlayer(2)
+    win_player1 = MakeWinningMove(1)
+    win_player2 = MakeWinningMove(2)
+    block_player1 = MakeWinningMoveAndBlock(1)
+    block_player2 = MakeWinningMoveAndBlock(2)
+    players = [rand_player1, block_player2]
     while gaming: 
         print("It's player", current_player +1, "turn")
         mark = game_mark[current_player]
@@ -151,3 +155,4 @@ if __name__ == "__main__":
         gaming = not game_ending(board_state, mark)
         game_board = update_game_board(sub_board, selected_board, game_board)
         selected_board, current_player = update_game_state(board_state, move, current_player)
+        
