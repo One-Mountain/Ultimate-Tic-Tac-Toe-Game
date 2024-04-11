@@ -1,3 +1,4 @@
+from players import RandomPlayer
 big_x = ["x", " ", "x",
          " ", "x", " ",
          "x", " ", "x"]
@@ -79,14 +80,16 @@ def board_selection(selected_board, board_state, game_board):
             choose = input('Please select a correct board: ')
         selected_board = int(choose)
     return chosen_board(game_board, selected_board-1), selected_board
-def make_move(sub_board, mark, selected_board):
-    new_board = sub_board[:]
+def get_move(sub_board, selected_board):
     move = input("Make your move on the board " + str(selected_board)+ ": ")
     while not valid_move(sub_board, move): 
         move = input("choose a correct move: ")
     move = int(move)
+    return move
+def make_move(sub_board, mark, move):
+    new_board = sub_board[:]
     new_board[move-1] = mark
-    return new_board, move
+    return new_board
 def update_states(sub_board, mark, selected_board, board_state):
     new_board_state = board_state[:]
     new_sub_board = sub_board[:]
@@ -132,12 +135,18 @@ if __name__ == "__main__":
     gaming = True 
     selected_board = 0
     game_board = make_board()
+    comp_player = RandomPlayer(2)
     while gaming: 
         print("It's player", current_player +1, "turn")
         mark = get_mark(current_player)
         render(game_board)
         sub_board, selected_board = board_selection(selected_board, board_state, game_board)
-        sub_board, move = make_move(sub_board, mark, selected_board)
+        if current_player == 0: 
+            #first player, x played by human
+            move = get_move(sub_board, selected_board)
+        else: 
+            move = comp_player.make_move
+        sub_board = make_move(sub_board, mark, move)
         board_state, sub_board = update_states(sub_board, mark, selected_board, board_state)
 
         gaming = not game_ending(board_state, mark)

@@ -1,5 +1,5 @@
 import random 
-class random_player: 
+class RandomPlayer: 
     def __init__(self, turn):
         self.turn = turn
         if turn == 1: 
@@ -15,17 +15,16 @@ class random_player:
     def choose_move(self, available_moves): 
         return random.choice(available_moves) 
    
-    def make_move(self, game_board, board_state, board):
-        self.update_board(game_board, board_state)
+    def make_move(self, board):
         possible_moves = self.get_legal_moves(board)
         move = self.choose_move(possible_moves)
         return move 
 
-class human_player:
+class HumanPlayer:
     pass 
-class make_winning_move: 
+class MakeWinningMove: 
     pass 
-class make_winning_move_and_block: 
+class MakeWinningMoveAndBlock: 
     pass 
-class focused_on_current_board: 
+class FocusedOnCurrentBoard: 
     pass
