@@ -137,7 +137,7 @@ if __name__ == "__main__":
     win_player2 = MakeWinningMove(2)
     block_player1 = MakeWinningMoveAndBlock(1)
     block_player2 = MakeWinningMoveAndBlock(2)
-    players = [rand_player1, block_player2]
+    players = [win_player1, block_player2]
     while gaming: 
         print("It's player", current_player +1, "turn")
         mark = game_mark[current_player]

@@ -57,7 +57,7 @@ class MakeWinningMove(RandomPlayer):
                 while a < b and a < len(my_marks)-1:
                     tic = my_marks[a]
                     tac = my_marks[b]
-                    combo = (tic, tac,i-1)
+                    combo = tuple(sorted((tic,tac,i-1)))
                     if combo in win_cond:
                         return i
                     b = b+1
@@ -96,8 +96,9 @@ class MakeWinningMoveAndBlock(MakeWinningMove):
                 while a < b and a < len(my_marks)-1:
                     tic = my_marks[a]
                     tac = my_marks[b]
-                    combo = (tic,tac,i-1)
+                    combo = tuple(sorted((tic,tac,i-1)))
                     if combo in win_cond:
+                        #print("Win move")
                         return i
                     b = b+1
                     if b >= len(my_marks)-1: 
@@ -110,13 +111,15 @@ class MakeWinningMoveAndBlock(MakeWinningMove):
                 while a < b and a < len(opponent)-1:
                     tic = opponent[a]
                     tac = opponent[b]
-                    combo = (tic, tac, i-1)
-                    if combo in win_cond: 
+                    combo = tuple(sorted((tic,tac,i-1)))
+                    if combo in win_cond:
+                        #print("Block move") 
                         return i
                     b = b+1
-                    if b >= len(opponent) -1: 
+                    if b >= len(opponent): 
                         a += 1
                         b = a+1
+        #print("Random Move")
         return random.choice(available_moves)
     def make_move(self, board, game_board, selected_board):
         possible_moves = self.get_legal_moves(board)
