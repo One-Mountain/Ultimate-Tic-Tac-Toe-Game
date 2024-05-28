@@ -1,4 +1,4 @@
-from players import MakeWinningMoveAndBlock, RandomPlayer, HumanPlayer, MakeWinningMove
+import players
 big_x = ["x", " ", "x",
          " ", "x", " ",
          "x", " ", "x"]
@@ -130,25 +130,27 @@ if __name__ == "__main__":
     selected_board = 0
     game_board = make_board()
     game_mark = ['x', 'o']
-    human = HumanPlayer(2)
-    rand_player1 = RandomPlayer(1)
-    rand_player2 = RandomPlayer(2)
-    win_player1 = MakeWinningMove(1)
-    win_player2 = MakeWinningMove(2)
-    block_player1 = MakeWinningMoveAndBlock(1)
-    block_player2 = MakeWinningMoveAndBlock(2)
-    players = [win_player1, block_player2]
+    human = players.HumanPlayer(2)
+    rand_player1 = players.RandomPlayer(1)
+    rand_player2 = players.RandomPlayer(2)
+    win_player1 = players.MakeWinningMove(1)
+    win_player2 = players.MakeWinningMove(2)
+    block_player1 = players.MakeWinningMoveAndBlock(1)
+    block_player2 = players.MakeWinningMoveAndBlock(2)
+    focus_player1 = players.FocusedOnCurrentBoard(1)
+    focus_player2 = players.FocusedOnCurrentBoard(2)
+    game_players = [block_player1, focus_player2]
     while gaming: 
         print("It's player", current_player +1, "turn")
         mark = game_mark[current_player]
         render(game_board)
         if selected_board == 0:
-            selected_board = get_board_selection(board_state, players[current_player])
+            selected_board = get_board_selection(board_state, game_players[current_player])
         sub_board = board_selection(game_board, selected_board)
-        move = players[current_player].make_move(sub_board, game_board, selected_board)
+        move = game_players[current_player].make_move(sub_board, game_board, selected_board)
         while not valid_move(sub_board, move):
             print("Make a valid move: ")
-            move = players[current_player].make_move(sub_board, game_board, selected_board)
+            move = game_players[current_player].make_move(sub_board, game_board, selected_board)
         sub_board = make_move(sub_board, mark, move)
         board_state, sub_board = update_states(sub_board, mark, selected_board, board_state)
 
